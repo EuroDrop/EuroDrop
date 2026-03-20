@@ -16,11 +16,6 @@
     <meta property="og:description" content="Fast 2-5 day shipping across Europe. Custom branding, sourcing, and automated fulfillment for professional dropshippers.">
     <meta property="og:image" content="https://i.postimg.cc/3w18MPqy/Balanca-eletronica-de-cozinha.avif">
 
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://eurodrop.pt/">
-    <meta property="twitter:title" content="EuroDrop | Private Dropshipping Agent">
-    <meta property="twitter:description" content="Scale your brand with European inventory and professional fulfillment services.">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -330,7 +325,7 @@
                 <span class="font-semibold text-brand">geral@eurodrop.pt</span>
             </p>
             <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100 text-left">
-                <form action="https://formspree.io/f/mwvrwwkl" method="POST" class="space-y-5">
+                <form id="contact-form" action="https://formspree.io/f/mwvrwwkl" method="POST" class="space-y-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <input type="text" name="name" aria-label="Full Name" placeholder="Full Name" data-ph-en="Full Name" data-ph-pt="Nome Completo" required minlength="3" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:border-brand outline-none">
                         <input type="email" name="email" aria-label="Email" placeholder="Email" data-ph-en="Email" data-ph-pt="Email" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:border-brand outline-none">
@@ -347,10 +342,10 @@
                     
                     <input type="text" name="_gotcha" style="display:none">
                     
-                    <button type="submit" class="w-full bg-brand text-white font-semibold py-3.5 rounded-lg hover:bg-brand_dark transition shadow-md" data-en="Apply to Become a Partner" data-pt="Candidatar a Parceiro">
+                    <button id="submit-btn" type="submit" class="w-full bg-brand text-white font-semibold py-3.5 rounded-lg hover:bg-brand_dark transition shadow-md" data-en="Apply to Become a Partner" data-pt="Candidatar a Parceiro">
                         Apply to Become a Partner
                     </button>
-                    <p class="text-center text-xs text-gray-500 mt-4 italic" data-en="By clicking apply, your info will be sent to our team for review." data-pt="Ao clicar em candidatar, as tuas informações serão enviadas para a nossa equipa para análise.">
+                    <p id="form-status" class="text-center text-xs text-gray-500 mt-4 italic" data-en="By clicking apply, your info will be sent to our team for review." data-pt="Ao clicar em candidatar, as tuas informações serão enviadas para a nossa equipa para análise.">
                         By clicking apply, your info will be sent to our team for review.
                     </p>
                 </form>
@@ -377,6 +372,45 @@
     <script>
         AOS.init({ once: true, offset: 50 });
 
+        // AJAX FORM HANDLING
+        const form = document.getElementById("contact-form");
+        const btn = document.getElementById("submit-btn");
+        const status = document.getElementById("form-status");
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const lang = document.getElementById('lang-toggle').value;
+            const data = new FormData(event.target);
+            
+            btn.disabled = true;
+            btn.innerText = lang === 'en' ? "Sending..." : "A enviar...";
+
+            fetch(event.target.action, {
+                method: form.method,
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    btn.innerText = lang === 'en' ? "Sent Successfully!" : "Enviado com Sucesso!";
+                    btn.classList.replace('bg-brand', 'bg-green-600');
+                    btn.classList.replace('hover:bg-brand_dark', 'hover:bg-green-700');
+                    status.innerText = lang === 'en' ? "Thank you! We will contact you soon." : "Obrigado! Entraremos em contacto brevemente.";
+                    form.reset();
+                } else {
+                    response.json().then(data => {
+                        btn.disabled = false;
+                        btn.innerText = lang === 'en' ? "Error. Try again." : "Erro. Tente de novo.";
+                        alert("Error: " + data.errors[0].message);
+                    });
+                }
+            }).catch(error => {
+                btn.disabled = false;
+                btn.innerText = lang === 'en' ? "Error. Try again." : "Erro. Tente de novo.";
+                alert("Oops! Connection error.");
+            });
+        });
+
+        // LANGUAGE & CURRENCY LOGIC
         const langToggle = document.getElementById('lang-toggle');
         const currencyToggle = document.getElementById('currency-toggle');
 
