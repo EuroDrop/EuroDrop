@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EuroDrop | Login de Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand: '#2563eb', brand_dark: '#1d4ed8' } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-['Inter'] flex items-center justify-center min-h-screen">
+
+    <div class="max-w-md w-full px-4">
+        <div class="text-center mb-8">
+            <a href="index.html" class="text-3xl font-black text-gray-900">Euro<span class="text-brand">Drop</span></a>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100 border border-white">
+            <h3 class="text-2xl font-black text-center mb-2 text-gray-900">Área de Cliente</h3>
+            <p class="text-gray-500 text-center mb-8 text-sm">Aceda ao seu catálogo personalizado</p>
+            
+            <form id="clientLoginForm" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nome de Utilizador</label>
+                    <input type="text" id="clientUser" placeholder="Ex: henriquev0829" required 
+                           class="w-full bg-gray-50 border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-brand outline-none transition-all">
+                </div>
+                
+                <button type="submit" class="w-full bg-brand text-white font-black py-5 rounded-2xl hover:bg-brand_dark transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-blue-100 uppercase tracking-widest text-sm">
+                    Entrar no Painel
+                </button>
+            </form>
+            
+            <div class="mt-8 pt-6 border-t border-gray-50 text-center">
+                <p class="text-xs text-gray-400">Não tem acesso? <a href="index.html#apply" class="text-brand font-bold">Contacte o seu agente.</a></p>
+            </div>
+        </div>
+        
+        <p class="text-center mt-8 text-[10px] text-gray-300 font-bold uppercase tracking-widest">&copy; 2026 EuroDrop</p>
+    </div>
+
+    <script>
+        document.getElementById('clientLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('clientUser').value.trim().toLowerCase();
+            // Redireciona para o subdomínio: henriquev0829.eurodrop.pt
+            window.location.href = "https://" + user + ".eurodrop.pt";
+        });
+    </script>
+</body>
+</html>
