@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EuroDrop | Login</title>
+    <title>EuroDrop | Login de Cliente</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,16 +27,19 @@
                 <div>
                     <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
                            data-pt="Nome de Utilizador" data-en="Username" data-fr="Nom d'utilisateur">Nome de Utilizador</label>
-                    <input type="text" id="clientUser" name="customer_user" placeholder="Inserir utilizador" required value="" 
+                    <input type="text" id="clientUser" name="customer_user" placeholder="Inserir utilizador" required 
                            autocomplete="one-time-code"
                            class="w-full bg-gray-50 border-none rounded-xl px-5 py-4 focus:ring-2 focus:ring-brand outline-none transition-all">
                 </div>
                 
-                <button type="submit" class="w-full bg-brand text-white font-black py-5 rounded-2xl hover:bg-brand_dark transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-blue-100 uppercase tracking-widest text-sm"
+                <button type="submit" id="submitBtn" class="w-full bg-brand text-white font-black py-5 rounded-2xl hover:bg-brand_dark transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-blue-100 uppercase tracking-widest text-sm"
                         data-pt="Entrar no Painel" data-en="Login to Dashboard" data-fr="Connexion">
                     Entrar no Painel
                 </button>
             </form>
+            
+            <div id="errorMessage" class="hidden mt-4 p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl text-center border border-red-100">
+                </div>
             
             <div class="mt-8 pt-6 border-t border-gray-50 text-center">
                 <p class="text-xs text-gray-400">
@@ -46,26 +49,71 @@
                 </p>
             </div>
         </div>
+        
+        <p class="text-center mt-8 text-[10px] text-gray-300 font-bold uppercase tracking-widest">&copy; 2026 EuroDrop</p>
     </div>
 
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const lang = urlParams.get('lang') || 'pt';
+    <script>
+        // 1. GESTÃO DE LÍNGUA
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'pt';
 
-    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
-        el.innerText = el.getAttribute('data-' + lang);
-    });
+        const translations = {
+            error: {
+                pt: 'Utilizador não encontrado ou sem acesso.',
+                en: 'User not found or no access granted.',
+                fr: 'Utilisateur non trouvé ou accès refusé.'
+            },
+            checking: {
+                pt: 'A verificar...',
+                en: 'Checking...',
+                fr: 'Vérification...'
+            }
+        };
 
-    const input = document.getElementById('clientUser');
-    window.onload = () => { input.value = ""; };
+        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+            el.innerText = el.getAttribute('data-' + lang);
+        });
 
-    document.getElementById('clientLoginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const user = input.value.trim().toLowerCase();
-        
+        const input = document.getElementById('clientUser');
+        const btn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('errorMessage');
+        const placeholders = { 'pt': 'Inserir utilizador', 'en': 'Enter username', 'fr': 'Entrez le nom' };
+        input.placeholder = placeholders[lang] || placeholders['pt'];
 
-        window.location.href = `https://${user}.eurodrop.pt?lang=${lang}`;
-    });
-</script>
+        window.onload = () => { input.value = ""; };
+
+        // 2. LÓGICA DE LOGIN COM VERIFICAÇÃO DE DNS
+        document.getElementById('clientLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const user = input.value.trim().toLowerCase();
+            
+            // Reset de interface
+            errorDiv.classList.add('hidden');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = translations.checking[lang];
+
+            try {
+                // Tentativa de "ping" ao subdomínio. 
+                // Se o DNS não existir na Amen, o fetch falha e vai para o 'catch'
+                const check = await fetch(`https://${user}.eurodrop.pt/index.html`, { 
+                    mode: 'no-cors',
+                    cache: 'no-store'
+                });
+                
+                // Se o navegador conseguiu contactar o servidor (mesmo com no-cors), avançamos
+                window.location.href = `https://${user}.eurodrop.pt?lang=${lang}`;
+
+            } catch (err) {
+                // Se der erro de rede (DNS inexistente), mostra o erro
+                btn.disabled = false;
+                btn.innerText = originalText;
+                errorDiv.innerText = translations.error[lang];
+                errorDiv.classList.remove('hidden');
+                input.classList.add('ring-2', 'ring-red-100');
+            }
+        });
+    </script>
 </body>
 </html>
