@@ -48,32 +48,24 @@
         </div>
     </div>
 
-    <script>
-        // 1. Lógica de Tradução baseada na URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const lang = urlParams.get('lang') || 'pt';
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const lang = urlParams.get('lang') || 'pt';
 
-        document.querySelectorAll('[data-' + lang + ']').forEach(el => {
-            el.innerText = el.getAttribute('data-' + lang);
-        });
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        el.innerText = el.getAttribute('data-' + lang);
+    });
 
-        // Ajustar placeholder do input
-        const input = document.getElementById('clientUser');
-        const placeholders = { 'pt': 'Inserir utilizador', 'en': 'Enter username', 'fr': 'Entrez le nom' };
-        input.placeholder = placeholders[lang] || placeholders['pt'];
+    const input = document.getElementById('clientUser');
+    window.onload = () => { input.value = ""; };
 
-        // 2. Forçar limpeza do campo ao carregar
-        window.onload = () => {
-            input.value = "";
-        };
+    document.getElementById('clientLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = input.value.trim().toLowerCase();
+        
 
-        // 3. Redirecionamento
-        document.getElementById('clientLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = input.value.trim().toLowerCase();
-            // Passa a língua também para o catálogo se quiseres
-            window.location.href = `https://${user}.eurodrop.pt?lang=${lang}`;
-        });
-    </script>
+        window.location.href = `https://${user}.eurodrop.pt?lang=${lang}`;
+    });
+</script>
 </body>
 </html>
