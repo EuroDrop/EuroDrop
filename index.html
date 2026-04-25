@@ -60,7 +60,8 @@
                             <option value="eur">EUR (€)</option>
                         </select>
                     </div>
-                <a href="login.html" class="border-2 border-brand text-brand px-6 py-2 rounded-lg font-bold hover:bg-brand hover:text-white transition-all text-sm">
+<a href="login.html" id="login-btn" class="border-2 border-brand text-brand px-6 py-2 rounded-lg font-bold hover:bg-brand hover:text-white transition-all text-sm" 
+   data-en="Client Area" data-pt="Área de Cliente" data-fr="Espace Client">
     Área de Cliente
 </a>
                 </div>
@@ -389,7 +390,7 @@
     <script>
         AOS.init({ once: true, offset: 50 });
 
-        // AJAX FORM HANDLING
+        
         const form = document.getElementById("contact-form");
         const btn = document.getElementById("submit-btn");
         const status = document.getElementById("form-status");
@@ -432,7 +433,7 @@
             });
         });
 
-        // LANGUAGE & CURRENCY LOGIC
+        
         const langToggle = document.getElementById('lang-toggle');
         const currencyToggle = document.getElementById('currency-toggle');
 
@@ -456,6 +457,12 @@
                 el.innerText = el.getAttribute(`data-${currency}`);
             });
         });
+        
+document.getElementById('login-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const currentLang = document.getElementById('lang-toggle').value;
+    window.location.href = `login.html?lang=${currentLang}`;
+});
     </script>
 </body>
 </html>
